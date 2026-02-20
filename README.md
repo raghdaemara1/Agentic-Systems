@@ -1,6 +1,8 @@
 # ⚡ Agentic AI System — Production Demo
 
-> A production-grade agentic AI system demonstrating **reasoning, planning, persistent memory, and multi-tool orchestration** — the core architecture behind next-generation LLM applications.
+> A portfolio-ready **agentic AI architecture demo UI** that visualizes **reasoning steps, planning, memory updates, tool execution, and model routing**.
+
+**Note:** This repo is a **frontend simulation** (React). It demonstrates the *patterns* and *trace UI* you’d expect in a production agentic system, but it does not include a backend LangGraph/FastAPI implementation.
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)
 ![LangGraph](https://img.shields.io/badge/LangGraph-Orchestration-FF6B35?style=flat-square)
@@ -63,6 +65,8 @@ User Query
   └────────────────────┘
 ```
 
+For a repo-level breakdown of the actual code structure, see `docs/ARCHITECTURE.md`.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -104,10 +108,6 @@ No single model is optimal for every subtask. GPT-4o excels at code and tool use
 ## 🏃 Run Locally
 
 ```bash
-# Clone the repo
-git clone https://github.com/raghdaemara1/agentic-ai-demo.git
-cd agentic-ai-demo
-
 # Install dependencies
 npm install
 
@@ -122,10 +122,16 @@ Then open `http://localhost:5173` and select any scenario to run.
 ## 📁 Project Structure
 
 ```
-agentic-ai-demo/
+Agentic-Systems/
+├── docs/
+│   └── ARCHITECTURE.md
 ├── src/
-│   ├── agentic_demo.jsx     # Main agent orchestration UI
-│   └── main.jsx             # React entry point
+│   ├── components/
+│   │   └── AgenticDemo.jsx        # Main UI + state machine runner
+│   ├── data/
+│   │   └── agenticDemoData.js     # Tools + scenarios (steps + outputs)
+│   ├── main.jsx                  # React entry point
+│   └── styles.css                # Global styles + animations
 ├── index.html
 ├── package.json
 ├── vite.config.js
