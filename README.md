@@ -41,28 +41,49 @@ Agent monitors an API, detects an incident, diagnoses root cause, applies a fix,
 
 ## 🏗️ Architecture
 
-```
-User Query
-    │
-    ▼
-┌─────────────────────────────────────────┐
-│           LangGraph Router              │
-│   (Intent Classification + Routing)     │
-└──────┬──────────┬──────────┬────────────┘
-       │          │          │
-  ┌────▼───┐ ┌───▼────┐ ┌───▼──────┐
-  │Planner │ │Memory  │ │  Router  │
-  │ Agent  │ │ Store  │ │(LLM Sel.)│
-  └────┬───┘ └───┬────┘ └───┬──────┘
-       │         │          │
-  ┌────▼─────────▼──────────▼────────┐
-  │         Execution Layer          │
-  │   Search │ Code Exec │ Retrieval │
-  └──────────────────────────────────┘
-       │
-  ┌────▼──────────────┐
-  │  Synthesis + Output│
-  └────────────────────┘
+```mermaid
+graph TD
+    %% Frontend Layer
+    subgraph Frontend ["Presentation Layer (React / Vite)"]
+        UI["Agentic Demo UI"]
+        Trace["Execution Trace"]
+        MemPanel["Memory Panel"]
+    end
+
+    %% API Layer
+    subgraph API ["API Layer (FastAPI)"]
+        Router["Router: /api/v1/agent/run"]
+        SSE["SSE Streamer"]
+    end
+
+    %% Orchestration Layer
+    subgraph Orchestration ["LangGraph State Machine"]
+        State["AgentState"]
+        PlanNode["Planner Node"]
+        RetrieveNode["Retrieval Context Node"]
+        SynthNode["Synthesis Node"]
+    end
+
+    %% Data & Model Layer
+    subgraph Infrastructure ["Data & Intelligence"]
+        DB[("SQLite - app.db")]
+        Vector[("ChromaDB - vector/")]
+        Ollama["Ollama - Local LLMs"]
+    end
+
+    %% Flow
+    UI -- "POST /api/v1/agent/run" --> Router
+    Router --> State
+    State --> PlanNode
+    PlanNode --> RetrieveNode
+    RetrieveNode -- "Similarity Search" --> Vector
+    RetrieveNode --> SynthNode
+    SynthNode -- "Prompt + Context" --> Ollama
+    Ollama -- "llama3.1 Output" --> SynthNode
+    
+    %% Real-time streaming
+    State -. "Yields Steps" .-> SSE
+    SSE -. "Server-Sent Events" .-> Trace
 ```
 
 For a repo-level breakdown of the actual code structure, see `docs/ARCHITECTURE.md`.
