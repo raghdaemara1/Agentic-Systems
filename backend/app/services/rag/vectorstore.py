@@ -12,8 +12,8 @@ from app.core.config import settings
 
 _client: chromadb.PersistentClient | None = None
 _collection: Collection | None = None
-_embeddings: OllamaEmbeddings | None = None
 
+_embeddings: OllamaEmbeddings | None = None
 
 def get_embeddings() -> OllamaEmbeddings:
     global _embeddings
@@ -46,7 +46,7 @@ def query_similar(*, query_text: str, k: int = 4) -> list[dict[str, Any]]:
     emb = get_embeddings()
     qvec = emb.embed_query(query_text)
     col = get_collection()
-    res = col.query(query_embeddings=[qvec], n_results=k, include=["documents", "metadatas", "distances", "ids"])
+    res = col.query(query_embeddings=[qvec], n_results=k, include=["documents", "metadatas", "distances"])
 
     out: list[dict[str, Any]] = []
     ids = res.get("ids", [[]])[0] or []
